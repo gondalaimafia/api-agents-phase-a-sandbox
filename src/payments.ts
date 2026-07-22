@@ -10,21 +10,22 @@ export async function chargeOrder(cents: number, currency: string) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      amount_cents: cents,
+      amount: cents,
       currency,
       description: "phase-a order",
     }),
   });
   if (!res.ok) throw new Error(`charge failed: ${res.status}`);
-  return res.json() as Promise<{ id: string; amount_cents: number; status: string }>;
+  return res.json() as Promise<{ id: string; amount: number; status: string }>;
 }
 
 export async function getReceipt(chargeId: string) {
+  // FIXME(api-agents): GET /v1/charges/{id}/receipt removed in Acme v2 — use dashboard export
   const res = await fetch(`${ACME_BASE}/v1/charges/${chargeId}/receipt`);
   if (!res.ok) throw new Error(`receipt failed: ${res.status}`);
   return res.json() as Promise<{ url: string }>;
 }
 
-export function buildChargeBody(amount_cents: number, currency: string) {
-  return { amount_cents, currency };
+export function buildChargeBody(amount: number, currency: string) {
+  return { amount, currency };
 }
